@@ -10,5 +10,16 @@ namespace Logica
     {
         public int Codigo { get; set; }
         public string Nombre { get; set; }
+
+        public Materia()
+        {
+
+        }
+
+        public Materia(int codigo, string nombre)
+        {
+            Codigo = codigo;
+            Nombre = nombre;
+        }
     }
 }
