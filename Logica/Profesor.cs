@@ -12,6 +12,14 @@ namespace Logica
     }
     public class Profesor : Persona
     {
+        public Profesor()
+        {
+
+        }
+        public Profesor(TipoProfesor valorInicial)
+        {
+            Tipo = valorInicial;            
+        }
         public TipoProfesor Tipo { get; set; }
 
         public override List<Inscripcion> ObtenerInscripciones(List<Inscripcion> inscripciones)
