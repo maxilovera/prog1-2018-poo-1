@@ -16,14 +16,16 @@ namespace Logica
         public List<string> DatosPersonas()
         {
             List<string> resultado = new List<string>();
-            foreach (var item in Alumnos)
+            foreach (var alumno in Alumnos)
             {
-                resultado.Add($"Nombre y apellido: {item.NombreApellido} – Fecha de ingreso: {item.FechaIngreso}");
+                resultado.Add($"Nombre y apellido: {alumno.NombreApellido} – Fecha de ingreso: {alumno.FechaIngreso}");
+                resultado.Add(alumno.ObtenerDescripcionPersona());
             }
 
-            foreach (var item in Docentes)
+            foreach (var docente in Docentes)
             {
-                resultado.Add($"Nombre y apellido: {item.NombreApellido} – Fecha de ingreso: {item.FechaIngreso}");
+                resultado.Add($"Nombre y apellido: {docente.NombreApellido} – Fecha de ingreso: {docente.FechaIngreso}");
+                resultado.Add(docente.ObtenerDescripcionPersona());
             }
 
             return resultado;
@@ -31,7 +33,8 @@ namespace Logica
 
         public ResultadoNota ObtenerNota(int codigoMateria, int codigoAlumno)
         {
-            Inscripcion inscripcion = Inscripciones.Where(x => x.CodigoAlumno == codigoAlumno && x.CodigoMateria == codigoMateria).FirstOrDefault();
+            Inscripcion inscripcion = Inscripciones.Where(x => x.CodigoAlumno == codigoAlumno && x.CodigoMateria == codigoMateria).FirstOrDefault(); //SingleOrDefault()
+
             ResultadoNota resultado = new ResultadoNota();
 
             if (inscripcion == null)
@@ -39,7 +42,7 @@ namespace Logica
             else
             {
                 if (DateTime.Now < inscripcion.FechaExamen)
-                    resultado.Mensaje = "Examen Pediente";
+                    resultado.Mensaje = "Examen Pendiente";
                 else
                     resultado.Nota = inscripcion.Nota;
             }
@@ -49,7 +52,9 @@ namespace Logica
 
         public ResultadoActualizacion ActualizarNota(int codigoMateria, int codigoProfesor, int codigoAlumno, int nota)
         {
-            Inscripcion inscripcion = Inscripciones.Where(x => x.CodigoAlumno == codigoAlumno && x.CodigoMateria == codigoMateria).FirstOrDefault();
+            Inscripcion inscripcion = Inscripciones.Where(x => x.CodigoAlumno == codigoAlumno 
+                                                            && x.CodigoMateria == codigoMateria).FirstOrDefault();
+
             ResultadoActualizacion resultado = new ResultadoActualizacion() { Mensaje = "" };
 
             if (inscripcion == null)
@@ -60,15 +65,21 @@ namespace Logica
                     resultado.Mensaje = "El examen no pasó aun";
                 else
                 {
-                    if (inscripcion.CodigoProfesor != codigoProfesor)
+                    if (inscripcion.CodigoProfesor != 0 && inscripcion.CodigoProfesor != codigoProfesor)
                         resultado.Mensaje = "Nota actualizada por otro profesor";
                     else
+                    {
                         inscripcion.Nota = nota;
+                        inscripcion.CodigoProfesor = codigoProfesor;
+                    }
                 }
             }
 
             resultado.ResultadoValido = resultado.Mensaje == "";
-
+            //if (resultado.Mensaje == "")
+            //    resultado.ResultadoValido = true;
+            //else
+            //    resultado.ResultadoValido = false;
             return resultado;
         }
 
@@ -79,11 +90,30 @@ namespace Logica
 
             List<Reporte> reporte = new List<Reporte>();
 
+            /*
+             * Materias = [{Codigo=1, Nombre="Matematica"}, {Codigo=2, Nombre="Literatura"}]
+             * materias.Select(x=>x.Nombre) 
+             * ["Matematica", "Literatura"].FirstOrDefault()
+             * "Matematica"
+             */ 
+
+
             foreach (var item in inscripcionesAlumno)
             {
+                string nombreMateria = "";
+                foreach (var materia in Materias)
+                {
+                    if (materia.Codigo == item.CodigoMateria)
+                        nombreMateria = materia.Nombre;
+                }
+
+                Materia materiaInscripcion = Materias.Where(x => x.Codigo == item.CodigoMateria).FirstOrDefault();
+
                 Reporte nuevoItem = new Reporte();
                 nuevoItem.FechaExamen = item.FechaExamen;
                 nuevoItem.Materia = Materias.Where(x => x.Codigo == item.CodigoMateria).Select(x => x.Nombre).FirstOrDefault();
+                //nuevoItem.Materia = nombreMateria;
+                //nuevoItem.Materia = materiaInscripcion.Nombre;
                 nuevoItem.Nota = item.Nota;
 
                 reporte.Add(nuevoItem);

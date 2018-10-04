@@ -17,6 +17,16 @@ namespace Logica
         public override List<Inscripcion> ObtenerInscripciones(List<Inscripcion> inscripciones)
         {
             return inscripciones.Where(x => x.CodigoProfesor == Codigo).ToList();
+
+            //List<Inscripcion> resultado = new List<Inscripcion>();
+
+            //foreach (var item in inscripciones)
+            //{
+            //    if (item.CodigoProfesor == Codigo)
+            //        resultado.Add(item);
+            //}
+
+            //return resultado;
         }
     }
 }

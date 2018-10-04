@@ -15,6 +15,11 @@ namespace Logica
         public DateTime FechaNacimiento { get; set; }
         public DateTime FechaIngreso { get; set; }
 
+        public string ObtenerDescripcionPersona()
+        {
+            return $"Nombre y apellido: {NombreApellido} – Fecha de ingreso: {FechaIngreso}";
+        }
+
         public abstract List<Inscripcion> ObtenerInscripciones(List<Inscripcion> inscripciones);
     }
 }
